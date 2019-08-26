@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--如果未引入webjars-locator，相关静态资源需要版本号，此处不便于升级-->
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+
+    <button onclick="myFunction()">试一试</button>
+
+    <button onclick='myAjax()'>ajax</button>
+    <div id="demo1">
+        <table class='table2' id="table2" width="760px" border="1" align="center">
+        </table>
+
+    </div>
+    <p>
+        <button  id="p2" onclick="upPage()">上页</button>第
+        <input type="text" id="a1" align="middle" size="4">页;
+        <input type="button" value="转到" onclick="locationPage()">
+        <button  id="a2" onclick="nextPage()">下页</button>;共
+        <button id="p1"></button>页
+    </p>
+    <form id="/login" name="login" action="/login" method="post">
+
+        <button >另一个页面</button>
+    </form>
+    <div id="demo"></div>
+</body>
+
+<script th:inline="javascript">
+        function myFunction(){
+            document.getElementById("table2").innerHTML = null;
+            var stulist = [[${list}]];
+            var stuList = JSON.parse(stulist);
+            var inf ; //"<table class='table2' width=\"760px\" border=\"1\" align=\"center\">";
+            inf = '<tr><td align="center">student_id</td><td align="center">name</td><td></td>';
+            var l = stuList.length;
+            for (var i = 0; i < l; i++) {
+                var stu = stuList[i];
+                inf += '<tr ><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\'  onmousedown=myAjax(this)>' + stu.student_id +
+                    '</td><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=myAjax(this)>' +
+                    stu.name + '</td><td onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=deleteById(this)>\'delete\'</td>';
+            }
+            //inf += '</table>';
+            document.getElementById("table2").innerHTML = inf;
+        }
+
+    function myAjax(obj) {
+
+        var txt =obj.innerHTML;
+        $.ajax({	//使用JQuery内置的Ajax方法
+            type: "post",	//post请求方式
+            async: true,	//异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "/hello1",	//请求发送到ShowInfoIndexServlet处
+            data: {id:txt},	//请求内包含一个key为name，value为A0001的参数；服务器接收到客户端请求时通过request.getParameter方法获取该参数值
+            //dataType: "json",	//返回数据形式为json
+            success: function (result) {
+                var result1=JSON.parse(result);
+                var inf = "<table class='table1' width=\"760px\" border=\"1\" align=\"center\">";
+                for(var stuInf in result1){
+                    inf += '<tr><td align="center">' + stuInf + '</td><td>' + result1[stuInf.toString()] + ' </td>';
+                }
+                inf += '</table>';
+                document.getElementById("demo").innerHTML = inf;
+            }
+        })
+    }
+
+    function deleteById(obj){
+        var index=obj.parentNode.rowIndex;
+        var table= document.getElementById("table2");
+        var txt = table.rows[index].cells[0].innerHTML;
+        var con=confirm("确认删除吗？");
+        if(con==false){
+            return;
+        }
+        $.ajax({//使用JQuery内置的Ajax方法
+            type: "post",
+            async: true,//异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "/delete",//请求发送到ShowInfoIndexServlet处
+            data: {id:txt },//请求内包含一个key为name，value为A0001的参数；服务器接收到客户端请求时通过request.getParameter方法获取该参数值\\\\n\\\' +\\n\' +\n' +
+            //dataType: "json",
+            success: function (result) {
+                all();
+            }
+        })
+    }
+    function all() {
+        $.ajax({
+            type: "post",
+            async: true,
+            url:"/updataTable",
+            //data: {id:txt},
+            //dataType: "json",
+            success: function (result) {
+                nextPage();
+            }
+            //     var stuList = eval(result);
+            //     //var stuList=JSON.parse(stuList1);
+            //     //console.log(stuList+"stuList");
+            //     var inf ;
+            //     inf = '<tr><td align="center">student_id</td><td align="center">name</td><td></td>';
+            //     var l = stuList.length;
+            //     var pageSize=add();
+            //     var stu=addStu();
+            //     var pageNum=Math.ceil(l/3);
+            //
+            //     for ( stu in stuList) {
+            //         if(stu<pageSize){
+            //             inf += '<tr ><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\'  onmousedown=myAjax(this)>' + stuList[stu].student_id +
+            //                 '</td><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=myAjax(this)>' +
+            //                 stuList[stu].name + '</td><td onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=deleteById(this)>\'delete\'</td>';
+            //             document.getElementById("a1").innerHTML ="1";
+            //         }
+            //         document.getElementById("table2").innerHTML = inf;
+            //
+            //         }
+            //     document.getElementById("p1").innerHTML = l.toString();
+            // }
+        })
+    }
+    var add = (function () {
+        var pageSize=0;
+        return function () {return pageSize+=3;}
+    })();
+    var addStu = (function () {
+        var stu=-3;
+        return function () {return  stu+=3;}
+    })();
+
+
+    var page=3;
+    var s=0;
+    var flag;
+    function locationPage(){
+        var pageloc=$("#a1").val();
+        page=pageloc*3;
+        s=page-3;
+        var stulist = [[${list}]];
+        var stuList = JSON.parse(stulist);
+        var inf ;
+        inf = '<tr><td align="center">student_id</td><td align="center">name</td><td></td>';
+        var l = stuList.length;
+        if(page-l>3){
+            alert("不存在该页！");
+            return;
+        }
+        var pageSize=page;
+        var st=s;
+        flag=0;
+        if(pageSize<0||st<0) {return;}
+        for ( st;st<pageSize&&st<l;st++) {
+            if(st<pageSize){
+                var stu = stuList[st];
+                inf += '<tr ><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\'  onmousedown=myAjax(this)>' + stu.student_id +
+                    '</td><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=myAjax(this)>' +
+                    stu.name + '</td><td onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=deleteById(this)>\'delete\'</td>';
+            }
+        }
+        //document.getElementById("a1").innerHTML =pageSize/3;
+        $("#a1").val(pageSize/3);
+        document.getElementById("table2").innerHTML = inf;
+        var pageNum=Math.ceil(l/3);
+        document.getElementById("p1").innerHTML = pageNum.toString();
+    }
+    function upPage() {
+        var stulist = [[${list}]];
+        var stuList = JSON.parse(stulist);
+        var inf ;
+        inf = '<tr><td align="center">student_id</td><td align="center">name</td><td></td>';
+        var l = stuList.length;
+        if(page==3||s==0) { alert("已经是第一页了！"); return;}
+
+        var pageSize;
+        var st;
+        var pageloc=$("#a1").val();
+
+        if(flag==0){
+            if(pageloc!=page) {
+                page = pageloc * 3;
+                s = page - 3;
+            }
+                pageSize=page-3;
+                st=s-3;
+
+
+        }else {
+            if(pageloc*3 != page-3) {
+                page = pageloc * 3;
+                s = page - 3;
+            }
+                pageSize = page - 6;
+                st = s - 6;
+        }
+        if(pageSize-l>3){
+            alert("输入页码过大！");
+            return;
+        }
+        page=pageSize;
+        s=st;
+        flag=0;
+        if(pageSize<0||st<0) {return;}
+        for (  st;st<pageSize&&st<l;st++) {
+            if(st<pageSize){
+                var stu = stuList[st];
+                inf += '<tr ><td align ="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\'  onmousedown=myAjax(this)>' + stu.student_id +
+                    '</td><td align ="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=myAjax(this)>' +
+                    stu.name + '</td><td onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=deleteById(this)>\'delete\'</td>';
+            }
+            $("#a1").val(pageSize/3);
+        }
+        document.getElementById("table2").innerHTML = inf;
+        // add();
+        // addStu();
+        var pageNum=Math.ceil(l/3);
+        document.getElementById("p1").innerHTML = pageNum.toString();
+
+    }
+
+
+    function nextPage() {
+        var stulist = [[${list}]];
+        var stuList = JSON.parse(stulist);
+        var inf ;
+        inf = '<tr><td align="center">student_id</td><td align="center">name</td><td></td>';
+        var l = stuList.length;
+
+        if(page-l>3){
+            alert("已经是最后一页了！");
+             return;
+        }
+        var pageSize=page;
+        var st=s;
+        if(flag==0){
+            pageSize=page+3;
+            st=s+3;
+        }else {
+            pageSize=page;
+            st=s;
+        }
+
+        page=pageSize+3;
+        s=st+3;
+        flag=1;
+        if(pageSize<0||st<0) {return;}
+        for ( st;st<pageSize&&st<l;st++) {
+            if(st<pageSize){
+                var stu = stuList[st];
+                inf += '<tr ><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\'  onmousedown=myAjax(this)>' + stu.student_id +
+                    '</td><td align="center" onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=myAjax(this)>' +
+                    stu.name + '</td><td onmouseover=style.color=\'red\' onmouseout=style.color=\'black\' onmousedown=deleteById(this)>\'delete\'</td>';
+            }
+        }
+        //document.getElementById("a1").innerHTML =pageSize/3;
+        $("#a1").val(pageSize/3);
+        document.getElementById("table2").innerHTML = inf;
+        var pageNum=Math.ceil(l/3);
+        document.getElementById("p1").innerHTML = pageNum.toString();
+
+    }
+    document.getElementById("table2").innerHTML = all();
+
+</script>
+</html>

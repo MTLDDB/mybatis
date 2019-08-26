@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.kingMapper">
+    <resultMap id="BaseResultMap" type="com.mybatis.model.testkingshard">
+        <id column="id" jdbcType="BIGINT" property="student_id" />
+        <result column="str" jdbcType="VARCHAR" property="str" />
+        <result column="f" jdbcType="DOUBLE" property="f" />
+        <result column="u" jdbcType="TINYINT" property="u" />
+    </resultMap>
+
+    <insert id="insertSk" parameterType="com.mybatis.model.testkingshard">
+         insert into test_shard_hash(id,str,f,e,u,i,ni)
+        values (
+        #{sk2.id},
+        #{sk2.str},
+        #{sk2.f},
+        #{sk2.e},
+        #{sk2.u},
+        #{sk2.i},
+        #{sk2.ni}
+        )
+    </insert>
+    <delete id="deleteById" parameterType="Integer">
+        delete from test_shard_hash where id=#{id}
+    </delete>
+
+    <select id="getNum" resultType="Integer">
+        select count(*) from test_shard_hash
+    </select>
+</mapper>

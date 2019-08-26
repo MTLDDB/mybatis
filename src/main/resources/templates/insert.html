@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<p id="demo1">xianzai</p>
+<script th:inline="javascript">
+    var stu={};
+    stu.name="小狗";
+    stu.sex=1;
+    stu.email="xiaogou@qq.com";
+    stu.locked=1;
+    stu.phone="1673459879";
+    console.log(stu);
+    var stuJson =JSON.stringify(stu);
+    //console.log(stuJson);
+    $.ajax({	//使用JQuery内置的Ajax方法
+    type: "post",	//post请求方式
+    async: true,	//异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+    url: "/insert1",	//请求发送到ShowInfoIndexServlet处
+    data: {student:stuJson},	//请求内包含一个key为name，value为A0001的参数；服务器接收到客户端请求时通过request.getParameter方法获取该参数值
+    //dataType: "json",	//返回数据形式为json
+    success: function (result) {
+    document.getElementById("demo1").innerHTML = result;
+    }
+    })
+        </script>
+</body>
+</html>

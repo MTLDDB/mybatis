@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.DBMapper">
+    <resultMap id="BaseResultMap" type="com.mybatis.model.Student">
+    <id column="student_id" jdbcType="INTEGER" property="student_id" />
+    <result column="name1" jdbcType="VARCHAR" property="name1" />
+</resultMap>
+    <select id="findUserById" parameterType="Integer" resultMap="BaseResultMap">
+		select * from student where student_id = #{id}
+	</select>
+    <select id="findUserByName" parameterType="String" resultMap="BaseResultMap">
+		select * from student where name1 = #{name}
+	</select>
+    <select id="findAll" resultMap="BaseResultMap">
+		select * from student
+	</select>
+    <insert id="insertStu" parameterType="com.mybatis.model.Student">
+         insert into student( name1, phone, email, sex, locked)
+        values (
+        #{student.name1},
+        #{student.phone},
+        #{student.email},
+        #{student.sex},
+        #{student.locked})
+    </insert>
+    <delete id="deleteById" parameterType="Integer">
+        delete from student where student_id=#{id}
+    </delete>
+    <select id="getNum" resultType="Integer">
+        select count(*) from student
+    </select>
+</mapper>

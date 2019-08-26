@@ -1,0 +1,123 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div id="regLogin" class="wrap" >
+    <div class="dialog">
+        <div class="box">
+            <h4>记录</h4>
+                <div class="infos" style="text-align:center;">
+                    <table class="field" style="text-align:center;" >
+                        <tr>
+                            <td  colspan="2" style="text-align:center; color:red"></td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">id：</td>
+                            <td>
+                                <input type="text" name="id" value="" id="id" class="id" required="true"/>
+                            </td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">str：</td>
+                            <td>
+                                <input type="text" name="str" value="" id="str" class="str" required="true"/>
+                            </td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">f：</td>
+                            <td>
+                                <input type="text" name="f" value="" id="f" class="f" required="true"/>
+                            </td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">e：</td>
+                            <td>
+                                <input type="text" name="e" value="" id="e" class="e" required="true"/>
+                            </td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">u：</td>
+                            <td>
+                                <input type="text" name="u" value="" id="u" class="u" required="true"/>
+                            </td>
+                        </tr>
+
+
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">i：</td>
+                            <td>
+                                <input type="text" name="i" value="" id="i" class="i" required="true"/>
+                            </td>
+                        </tr>
+                        <tr style="text-align:center ;margin-left:300px;">
+                            <td class="field" style="color:black;">ni：</td>
+                            <td>
+                                <input type="text" name="ni" value="" id="ni" class="ni" required="true"/>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <div class="buttons">
+                        <p id="demo1">这里是结果</p>
+                        <!--<input type="submit" id="User_login_action_0" value="录入"/>-->
+                        <button onclick=myAjax()>提交</button>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script th:inline="javascript">
+    function myAjax() {
+        var id = $("#id").val();
+        var str = $("#str").val();
+        var f = $("#f").val();
+        var e = $("#e").val();
+        var u = $("#u").val();
+        var i = $("#i").val();
+        var ni = $("#ni").val();
+        var stu={};
+        stu.id = id;
+        stu.str = str;
+        stu.f = f;
+        stu.e = e;
+        stu.u = u;
+        stu.i = i;
+        stu.ni = ni;
+
+        var stuJson =JSON.stringify(stu);
+        console.log(stuJson);
+        $.ajax({	//使用JQuery内置的Ajax方法
+            type: "post",	//post请求方式
+            async: true,	//异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "/insertSk",	//请求发送到ShowInfoIndexServlet处
+            data: {sk:stuJson},	//请求内包含一个key为name，value为A0001的参数；服务器接收到客户端请求时通过request.getParameter方法获取该参数值
+            //dataType: "json",	//返回数据形式为json
+            success: function (result) {
+                if(result=true){document.getElementById("demo1").innerHTML = '成功了';
+                    $("#id").val('');
+                    $("#str").val('');
+                    $("#f").val('');
+                    $("#e").val('');
+                    $("#u").val('');
+                    $("#i").val('');
+                    $("#ni").val('');
+                }else{
+                    document.getElementById("demo1").innerHTML = "失败了";
+                }
+
+            }
+        })
+    }
+    //请求成功时执行该函数内容，result即为服务器返回的json对象
+</script>
+</html>

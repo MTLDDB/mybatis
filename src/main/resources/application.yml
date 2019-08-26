@@ -1,0 +1,109 @@
+server:
+  port: 8082
+
+spring:
+
+
+
+  # 视图层配置
+  thymeleaf:
+      #cache: true
+      prefix: classpath:/templates/
+      suffix: .html
+      encoding: UTF-8
+      #content-type: text/html
+      #mode: html
+  #mvc:
+    #view:
+     # prefix: /templates/
+      #suffix: .html
+  #servlet:
+   # multipart:
+     # max-file-size: 10MB
+     # max-request-size: 20MB
+
+
+  datasource:
+    druid:
+      username: root
+      password: 123
+      url: jdbc:mysql://192.168.1.144:9696/kingshard?useSSL=false&characterEncoding=UTF-8&allowMultiQueries=true
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+
+      # 允许多SQL查询
+      filter:
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: true
+      # 初始化时建立物理连接的个数
+      initial-size: 5
+      # 最大连接池数量
+      max-active: 20
+      # 最小连接池数量
+      min-idle: 5
+      # 获取连接时最大等待时间，单位毫秒
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 连接保持空闲而不被驱逐的最小时间
+      min-evictable-idle-time-millis: 300000
+      # 用来检测连接是否有效的sql，要求是一个查询语句
+      validation-query: SELECT 1 FROM DUAL
+      # 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+      test-while-idle: true
+      # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+      test-on-borrow: false
+      # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+      test-on-return: false
+      # 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+      pool-prepared-statements: false
+      # 要启用PSCache，必须配置大于0，当大于0时，pool-prepared-statements自动触发修改为true。
+      max-pool-prepared-statement-per-connection-size: 0
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计
+      filters: stat,wall
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 监控登录账号密码
+      stat-view-servlet:
+        login-username: ameya
+        login-password: ameya
+
+
+  rabbitmq:
+      host: localhost
+      port: 5672
+      # API端口
+      apiport: 15672
+      username: ameyamq
+      password: ameyads
+      virtual-host: Spider
+      listener:
+        simple:
+          acknowledge-mode: manual
+          concurrency: 5
+          max-concurrency: 5
+          retry:
+            enabled: true
+      taskQueue: Spider_Task_Queue1
+      resultQueue: Spider_Result_Queue_Test
+
+# Mybatis
+mybatis:
+  #MyBatis相关自定义配置
+  #实体类所做包
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.mybatis.model
+    #configuration:
+    #map-underscore-to-camel-case: true
+  #cache-enabled: false
+  # rabbitmq连接配置
+
+spider:
+    tasksender:
+        sendCount: 5
+        mqMaxMessage: 30
+
+#logging:
+ #   file: my.log
