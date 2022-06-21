@@ -61,7 +61,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>8.0.28</version>
             <scope>system</scope>
             <systemPath>${basedir}/src/lib/mysql-connector-java-5.0.6-bin.jar</systemPath>
         </dependency>
